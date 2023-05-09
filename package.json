@@ -1,0 +1,25 @@
+{
+  "name": "projeto16-boardcamp",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./src/app.js",
+  "scripts": {
+    "start": "node ./src/app.js",
+    "dev": "nodemon ./scr/app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AndreHilario/Projeto16-BoardCamp.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AndreHilario/Projeto16-BoardCamp/issues"
+  },
+  "homepage": "https://github.com/AndreHilario/Projeto16-BoardCamp#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  }
+}
