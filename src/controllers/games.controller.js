@@ -11,7 +11,7 @@ export async function getGames(req, res) {
         res.status(500).send(err.message);
     }
 
-}
+};
 
 export async function postGames(req, res) {
 
@@ -21,9 +21,8 @@ export async function postGames(req, res) {
 
         const existingGame = await db.query(`SELECT name FROM games WHERE name = $1;`, [name]);
         
-        if (existingGame.rowCount > 0) {
-            return res.status(409).send("Name already exist");
-        }
+        if (existingGame.rowCount > 0) return res.status(409).send("Name already exist");
+        
 
         await db.query(`INSERT INTO games ("name", "image", "stockTotal", "pricePerDay") VALUES ($1, $2, $3, $4);`, [name, image, stockTotal, pricePerDay]);
         res.sendStatus(201);
@@ -31,4 +30,4 @@ export async function postGames(req, res) {
         res.status(500).send(err.message);
     }
 
-}
+};
