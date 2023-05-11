@@ -2,17 +2,17 @@ import { db } from "../database/database.js";
 
 export async function getGames(req, res) {
 
-    const { query, order, desc } = req.query;
+    const { name, order, desc } = req.query;
 
     try {
         let games;
 
-        if (query && order) {
-            games = await db.query(`SELECT * FROM games WHERE name ILIKE $1 ORDEY BY $2;`, [`${query}%`, order]);
-        } else if (query && order && desc) {
-            games = await db.query(`SELECT * FROM games WHERE name ILIKE $1 ORDEY BY $2 DESC;`, [`${query}%`, order]);
-        } else if (query) {
-            games = await db.query(`SELECT * FROM games WHERE name ILIKE $1;`, [`${query}%`]);
+        if (name && order) {
+            games = await db.query(`SELECT * FROM games WHERE name ILIKE $1 ORDER BY $2;`, [`${name}%`, order]);
+        } else if (name && order && desc) {
+            games = await db.query(`SELECT * FROM games WHERE name ILIKE $1 ORDER BY $2 DESC;`, [`${name}%`, order]);
+        } else if (name) {
+            games = await db.query(`SELECT * FROM games WHERE name ILIKE $1;`, [`${name}%`]);
         } else {
             games = await db.query(`SELECT * FROM games;`);
         }
