@@ -2,9 +2,20 @@ import { db } from "../database/database.js";
 
 export async function getGames(req, res) {
 
-    try {
+    const { query, order, desc } = req.query;
 
-        const games = await db.query(`SELECT * FROM games;`);
+    try {
+        let games;
+
+        if (query && order) {
+            games = await db.query(`SELECT * FROM games WHERE name ILIKE $1 ORDEY BY $2;`, [`${query}%`, order]);
+        } else if (query && order && desc) {
+            games = await db.query(`SELECT * FROM games WHERE name ILIKE $1 ORDEY BY $2 DESC;`, [`${query}%`, order]);
+        } else if (query) {
+            games = await db.query(`SELECT * FROM games WHERE name ILIKE $1;`, [`${query}%`]);
+        } else {
+            games = await db.query(`SELECT * FROM games;`);
+        }
         res.send(games.rows);
 
     } catch (err) {
@@ -20,9 +31,9 @@ export async function postGames(req, res) {
     try {
 
         const existingGame = await db.query(`SELECT name FROM games WHERE name = $1;`, [name]);
-        
+
         if (existingGame.rowCount > 0) return res.status(409).send("Name already exist");
-        
+
 
         await db.query(`INSERT INTO games ("name", "image", "stockTotal", "pricePerDay") VALUES ($1, $2, $3, $4);`, [name, image, stockTotal, pricePerDay]);
         res.sendStatus(201);

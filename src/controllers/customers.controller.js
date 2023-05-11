@@ -2,9 +2,17 @@ import { db } from "../database/database.js";
 
 export async function getCustomers(req, res) {
 
+    const { query } = req.query;
+
     try {
 
-        const customers = await db.query(`SELECT * FROM customers;`);
+        let customers;
+
+        if (query) {
+            customers = await db.query(`SELECT * FROM customers WHERE cpf ILIKE $1;`, [`${query}%`]);
+        } else {
+            customers = await db.query(`SELECT * FROM customers;`);
+        }
 
         res.send(customers.rows);
 
