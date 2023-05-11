@@ -12,7 +12,7 @@ export async function getCustomers(req, res) {
         if (cpf) {
             queryString += ` WHERE cpf LIKE $1`;
             if (order) {
-                queryString += ` ORDER BY ${order}`;
+                queryString += ` ORDER BY "${order}"`;
                 if (desc && desc.toLowerCase() === "true") {
                     queryString += ` DESC`;
                 }
@@ -20,7 +20,7 @@ export async function getCustomers(req, res) {
             customers = await db.query(queryString, [`${cpf}%`]);
         } else {
             if (order) {
-                queryString += ` ORDER BY ${order}`;
+                queryString += ` ORDER BY "${order}"`;
                 if (desc && desc.toLowerCase() === "true") {
                     queryString += ` DESC`;
                 }

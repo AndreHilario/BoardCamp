@@ -11,7 +11,7 @@ export async function getGames(req, res) {
         if (name) {
             queryString += ` WHERE name ILIKE $1`;
             if (order) {
-                queryString += ` ORDER BY ${order}`;
+                queryString += ` ORDER BY "${order}"`;
                 if (desc && desc.toLowerCase() === "true") {
                     queryString += ` DESC`;
                 }
@@ -19,7 +19,7 @@ export async function getGames(req, res) {
             games = await db.query(queryString, [`${name}%`]);
         } else {
             if (order) {
-                queryString += ` ORDER BY ${order}`;
+                queryString += ` ORDER BY "${order}"`;
                 if (desc && desc.toLowerCase() === "true") {
                     queryString += ` DESC`;
                 }
