@@ -2,16 +2,30 @@ import { db } from "../database/database.js";
 
 export async function getCustomers(req, res) {
 
-    const { cpf } = req.query;
+    const { cpf, order, desc } = req.query;
 
     try {
 
         let customers;
+        let queryString = `SELECT * FROM customers`;
 
         if (cpf) {
-            customers = await db.query(`SELECT * FROM customers WHERE cpf ILIKE $1;`, [`${cpf}%`]);
+            queryString += ` WHERE cpf LIKE $1`;
+            if (order) {
+                queryString += ` ORDER BY ${order}`;
+                if (desc && desc.toLowerCase() === "true") {
+                    queryString += ` DESC`;
+                }
+            }
+            customers = await db.query(queryString, [`${cpf}%`]);
         } else {
-            customers = await db.query(`SELECT * FROM customers;`);
+            if (order) {
+                queryString += ` ORDER BY ${order}`;
+                if (desc && desc.toLowerCase() === "true") {
+                    queryString += ` DESC`;
+                }
+            }
+            customers = await db.query(queryString);
         }
 
         res.send(customers.rows);

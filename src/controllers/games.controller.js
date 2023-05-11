@@ -6,16 +6,27 @@ export async function getGames(req, res) {
 
     try {
         let games;
+        let queryString = `SELECT * FROM games`;
 
-        if (name && order) {
-            games = await db.query(`SELECT * FROM games WHERE name ILIKE $1 ORDER BY $2;`, [`${name}%`, order]);
-        } else if (name && order && desc) {
-            games = await db.query(`SELECT * FROM games WHERE name ILIKE $1 ORDER BY $2 DESC;`, [`${name}%`, order]);
-        } else if (name) {
-            games = await db.query(`SELECT * FROM games WHERE name ILIKE $1;`, [`${name}%`]);
+        if (name) {
+            queryString += ` WHERE name ILIKE $1`;
+            if (order) {
+                queryString += ` ORDER BY ${order}`;
+                if (desc && desc.toLowerCase() === "true") {
+                    queryString += ` DESC`;
+                }
+            }
+            games = await db.query(queryString, [`${name}%`]);
         } else {
-            games = await db.query(`SELECT * FROM games;`);
+            if (order) {
+                queryString += ` ORDER BY ${order}`;
+                if (desc && desc.toLowerCase() === "true") {
+                    queryString += ` DESC`;
+                }
+            }
+            games = await db.query(queryString);
         }
+
         res.send(games.rows);
 
     } catch (err) {
