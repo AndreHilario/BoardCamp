@@ -153,7 +153,7 @@ export async function deleteRentals(req, res) {
         const existingRental = await db.query(`SELECT * FROM rentals WHERE id = $1;`, [id]);
         if (existingRental.rows.length === 0) return res.sendStatus(404);
 
-        const finishedRental = await db.query(`SELECT * FROM rentals WHERE id = $1 AND returnDate IS NULL;`, [id]);
+        const finishedRental = await db.query(`SELECT * FROM rentals WHERE id = $1 AND "returnDate" IS NULL;`, [id]);
         if (finishedRental.rowCount > 0) return res.sendStatus(400);
 
         await db.query(`DELETE FROM rentals WHERE id = $1;`, [id]);
