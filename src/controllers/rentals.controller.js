@@ -114,11 +114,11 @@ export async function postRentalsById(req, res) {
         `,
             [id]);
 
-
+        if (returnDateQuery.rows.length === 0) return res.sendStatus(404);
         if (returnDateQuery.rows[0].returnDate !== null) return res.sendStatus(400);
 
 
-        const returnQuery = await db.query(`
+        await db.query(`
         UPDATE rentals AS r     
         SET "returnDate" = $1::date, "delayFee" = (
             CASE
@@ -134,8 +134,6 @@ export async function postRentalsById(req, res) {
         )
         WHERE r.id = $2
         ;`, [returnDate, id]);
-
-        if (returnQuery.rowCount === 0) return res.sendStatus(404);
 
         res.sendStatus(200);
     } catch (err) {
