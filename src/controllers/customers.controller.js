@@ -60,15 +60,15 @@ export async function postCustomers(req, res) {
 
     const { name, phone, cpf, birthday } = req.body;
 
-    const formattedDatePost = birthday.format("YYYY-MM-DD");
-
     try {
 
         const existingCpf = await db.query(`SELECT * FROM customers WHERE cpf = $1;`, [cpf]);
 
         if (existingCpf.rowCount > 0) return res.status(409).send("CPF already exist");
 
-        await db.query(`INSERT INTO customers ("name", "phone", "cpf", "birthday") VALUES ($1, $2, $3, $4);`, [name, phone, cpf, formattedDatePost]);
+        const formattedBirthday = new Date(birthday).toISOString().split('T')[0];
+
+        await db.query(`INSERT INTO customers ("name", "phone", "cpf", "birthday") VALUES ($1, $2, $3, $4);`, [name, phone, cpf, formattedBirthday]);
 
         res.sendStatus(201);
 
@@ -83,8 +83,6 @@ export async function editCustomers(req, res) {
     const { name, phone, cpf, birthday } = req.body;
     const { id } = req.params;
 
-    const formattedDateEdit = birthday.format("YYYY-MM-DD");
-
     if (!id) return res.status(400).send("The id parameter is mandatory");
 
     try {
@@ -92,8 +90,10 @@ export async function editCustomers(req, res) {
         const existingCustomer = await db.query(`SELECT * FROM customers WHERE cpf = $1 AND id <> $2;`, [cpf, id]);
         if (existingCustomer.rowCount > 0) return res.sendStatus(409);
 
+        const formattedBirthday = new Date(birthday).toISOString().split('T')[0];
 
-        await db.query(`UPDATE customers SET name = $1, phone = $2, cpf = $3, birthday = $4 WHERE id = $5;`, [name, phone, cpf, formattedDateEdit, id]);
+
+        await db.query(`UPDATE customers SET name = $1, phone = $2, cpf = $3, birthday = $4 WHERE id = $5;`, [name, phone, cpf, formattedBirthday, id]);
 
         res.sendStatus(200);
 
