@@ -3,7 +3,7 @@ import { db } from "../database/database.js";
 
 export async function getRentals(req, res) {
 
-    const { customerId, gameId, order, desc, status } = req.query;
+    const { customerId, gameId, order, desc, status, startDate } = req.query;
 
     try {
         let rental;
@@ -16,20 +16,25 @@ export async function getRentals(req, res) {
             ON rentals."gameId" = games.id
         `;
 
+        const filters = [];
+
         if (customerId) {
-            queryString += ` WHERE "customerId"=$1`;
-            if (gameId) {
-                queryString += ` AND "gameId"=$2`;
-            }
-        } else if (gameId) {
-            queryString += ` WHERE "gameId"=$1`;
+            filters.push(`"customerId"=$${filters.length + 1}`);
+        }
+        if (gameId) {
+            filters.push(`"gameId"=$${filters.length + 1}`);
+        }
+        if (status === "open") {
+            filters.push(`"returnDate" IS NULL`);
+        }
+        if (status === "closed") {
+            filters.push(`"returnDate" IS NOT NULL`);
+        }
+        if (startDate) {
+            filters.push(`"rentDate" >= $${filters.length + 1}`);
         }
 
-        if (status === "open") {
-            queryString += ` AND "returnDate" IS NULL`;
-        } else if (status === "closed") {
-            queryString += ` AND "returnDate" IS NOT NULL`;
-        }
+        queryString += filters.length > 0 ? ` WHERE ${filters.join(' AND ')}` : '';
 
         if (order) {
             queryString += ` ORDER BY "${order}"`;
@@ -38,13 +43,9 @@ export async function getRentals(req, res) {
             }
         }
 
-        if (customerId && gameId) {
-            rental = await db.query(queryString, [customerId, gameId]);
-        } else if (customerId || gameId) {
-            rental = await db.query(queryString, [customerId || gameId]);
-        } else {
-            rental = await db.query(queryString);
-        }
+        const params = [customerId, gameId, startDate];
+
+        rental = await db.query(queryString, params.filter(Boolean));   
 
         const formattedRental = rental.rows.map((item) => ({
             id: item.id,
