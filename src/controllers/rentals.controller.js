@@ -3,7 +3,7 @@ import { db } from "../database/database.js";
 
 export async function getRentals(req, res) {
 
-    const { customerId, gameId, order, desc } = req.query;
+    const { customerId, gameId, order, desc, status } = req.query;
 
     try {
         let rental;
