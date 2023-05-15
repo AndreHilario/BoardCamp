@@ -6,7 +6,7 @@ export async function getRentals(req, res) {
     const { customerId, gameId, order, desc, status, startDate } = req.query;
 
     try {
-        
+
         let queryString = `
         SELECT rentals.*, games.id AS "idGame", games.name AS "gameName", customers.id AS "idCustomer", customers.name AS "customerName"
         FROM rentals
@@ -45,7 +45,7 @@ export async function getRentals(req, res) {
 
         const params = [customerId, gameId, startDate];
 
-        const rental = await db.query(queryString, params);   
+        const rental = await db.query(queryString, params.filter(Boolean));
 
         const formattedRental = rental.rows.map((item) => ({
             id: item.id,
