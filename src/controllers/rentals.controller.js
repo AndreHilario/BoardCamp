@@ -25,16 +25,26 @@ export async function getRentals(req, res) {
             queryString += ` WHERE "gameId"=$1`;
         }
 
-        queryString += (status === "open") ? ` AND "returnDate" IS NULL` :
-            (status === "closed") ? ` AND "returnDate" IS NOT NULL` : '';
-
-        if (order) {
-            queryString += ` ORDER BY "${order}"${(desc && desc.toLowerCase() === "true") ? ` DESC` : ''}`;
+        if (status === "open") {
+            queryString += ` AND "returnDate" IS NULL`;
+        } else if (status === "closed") {
+            queryString += ` AND "returnDate" IS NOT NULL`;
         }
 
-        const params = customerId && gameId ? [customerId, gameId] : [customerId || gameId];
+        if (order) {
+            queryString += ` ORDER BY "${order}"`;
+            if (desc && desc.toLowerCase() === "true") {
+                queryString += ` DESC`;
+            }
+        }
 
-        rental = await db.query(queryString, params);
+        if (customerId && gameId) {
+            rental = await db.query(queryString, [customerId, gameId]);
+        } else if (customerId || gameId) {
+            rental = await db.query(queryString, [customerId || gameId]);
+        } else {
+            rental = await db.query(queryString);
+        }
 
         const formattedRental = rental.rows.map((item) => ({
             id: item.id,
