@@ -5,27 +5,37 @@ export async function getGames(req, res) {
     const { name, order, desc } = req.query;
 
     try {
-        let games;
         let queryString = `SELECT * FROM games`;
 
+        const filters = [];
+        const params = [];
+
         if (name) {
-            queryString += ` WHERE name ILIKE $1`;
-            if (order) {
-                queryString += ` ORDER BY "${order}"`;
-                if (desc && desc.toLowerCase() === "true") {
-                    queryString += ` DESC`;
-                }
-            }
-            games = await db.query(queryString, [`${name}%`]);
-        } else {
-            if (order) {
-                queryString += ` ORDER BY "${order}"`;
-                if (desc && desc.toLowerCase() === "true") {
-                    queryString += ` DESC`;
-                }
-            }
-            games = await db.query(queryString);
+            filters.push(`name ILIKE $${filters.length + 1}`);
+            params.push(`${name}%`);
         }
+
+        if (filters.length > 0) {
+            queryString += ` WHERE ${filters.join(' AND ')}`;
+        }
+
+        if (order) {
+            queryString += ` ORDER BY "${order}"`;
+            if (desc && desc.toLowerCase() === "true") {
+                queryString += ` DESC`;
+            }
+        }
+
+        if (limit) {
+            queryString += ` LIMIT ${limit}`;
+        }
+
+        if (offset) {
+            queryString += ` OFFSET ${offset}`;
+        }
+
+        const games = await db.query(queryString, params);
+
 
         res.send(games.rows);
 

@@ -3,7 +3,7 @@ import { db } from "../database/database.js";
 
 export async function getRentals(req, res) {
 
-    const { customerId, gameId, order, desc, status, startDate } = req.query;
+    const { customerId, gameId, order, desc, status, startDate, limit, offset } = req.query;
 
     try {
 
@@ -41,6 +41,14 @@ export async function getRentals(req, res) {
             if (desc && desc.toLowerCase() === "true") {
                 queryString += ` DESC`;
             }
+        }
+
+        if (offset) {
+            queryString += ` OFFSET ${offset}`;
+        }
+
+        if (limit) {
+            queryString += ` LIMIT ${limit}`;
         }
 
         const params = [customerId, gameId, startDate];

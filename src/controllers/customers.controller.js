@@ -1,7 +1,7 @@
 import { db } from "../database/database.js";
 
 export async function getCustomers(req, res) {
-    const { cpf, order, desc } = req.query;
+    const { cpf, order, desc, limit, offset } = req.query;
 
     try {
         let queryString = `SELECT * FROM customers`;
@@ -18,6 +18,16 @@ export async function getCustomers(req, res) {
                 queryString += ` DESC`;
             }
         }
+
+        if (limit) {
+            queryString += ` LIMIT ${limit}`;
+        }
+
+        if (offset) {
+            queryString += ` OFFSET ${offset}`;
+        }
+
+        const games = await db.query(queryString, params);
 
         const customers = await db.query(queryString, queryParams);
 
