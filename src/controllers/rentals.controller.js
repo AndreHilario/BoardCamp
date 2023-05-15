@@ -25,6 +25,12 @@ export async function getRentals(req, res) {
             queryString += ` WHERE "gameId"=$1`;
         }
 
+        if (status === "open") {
+            queryString += ` AND "returnDate" IS NULL`;
+        } else if (status === "closed") {
+            queryString += ` AND "returnDate" IS NOT NULL`;
+        }
+
         if (order) {
             queryString += ` ORDER BY "${order}"`;
             if (desc && desc.toLowerCase() === "true") {
