@@ -27,8 +27,6 @@ export async function getCustomers(req, res) {
             queryString += ` OFFSET ${offset}`;
         }
 
-        const games = await db.query(queryString, params);
-
         const customers = await db.query(queryString, queryParams);
 
 
