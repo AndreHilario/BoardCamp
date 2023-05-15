@@ -5,7 +5,7 @@ export async function getCustomers(req, res) {
 
     try {
         let queryString = `SELECT * FROM customers`;
-        let queryParams = [];
+        const queryParams = [];
 
         if (cpf) {
             queryString += ` WHERE cpf LIKE $1`;
@@ -19,7 +19,7 @@ export async function getCustomers(req, res) {
             }
         }
 
-        let customers = await db.query(queryString, queryParams);
+        const customers = await db.query(queryString, queryParams);
 
 
         customers.rows = customers.rows.map(customer => {
