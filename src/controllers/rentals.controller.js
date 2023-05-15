@@ -14,7 +14,7 @@ export async function getRentals(req, res) {
             ON rentals."customerId" = customers.id  
         JOIN games
             ON rentals."gameId" = games.id
-        `
+        `;
 
         if (customerId) {
             queryString += ` WHERE "customerId"=$1`;
@@ -59,7 +59,7 @@ export async function getRentals(req, res) {
         res.status(500).send(err.message);
     }
 
-};
+}
 
 export async function postRentals(req, res) {
 
@@ -94,7 +94,7 @@ export async function postRentals(req, res) {
         res.status(500).send(err.message);
     }
 
-};
+}
 
 export async function postRentalsById(req, res) {
 
@@ -140,7 +140,7 @@ export async function postRentalsById(req, res) {
         res.status(500).send(err.message);
     }
 
-};
+}
 
 export async function deleteRentals(req, res) {
 
@@ -163,4 +163,4 @@ export async function deleteRentals(req, res) {
         res.status(500).send(err.message);
     }
 
-};
+}
